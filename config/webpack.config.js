@@ -1,4 +1,4 @@
-'use strict';
+
 
 const fs = require('fs');
 const path = require('path');
@@ -40,6 +40,10 @@ const webpackDevClientEntry = require.resolve(
 const reactRefreshOverlayEntry = require.resolve(
   'react-dev-utils/refreshOverlayInterop'
 );
+
+function pathResolve(dir) {
+  return path.resolve(__dirname, '..', dir)
+}
 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
@@ -198,9 +202,9 @@ module.exports = function (webpackEnv) {
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+      // filename: isEnvProduction
+      //   ? 'static/js/[name].[contenthash:8].js'
+      //   : isEnvDevelopment && 'static/js/bundle.js',
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
       // There are also additional JS chunk files if you use code splitting.
@@ -227,7 +231,7 @@ module.exports = function (webpackEnv) {
       globalObject: 'this',
       filename: 'app.js',
       // libraryTarget: 'umd',
-      libraryTarget: "system"
+      libraryTarget: isEnvProduction ? "system" : "umd"
     },
     optimization: {
       minimize: isEnvProduction,
@@ -333,6 +337,8 @@ module.exports = function (webpackEnv) {
           'react-dom$': 'react-dom/profiling',
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
+        '@': pathResolve('src'),
+        '_c': pathResolve('src/components'),
         ...(modules.webpackAliases || {}),
       },
       plugins: [
@@ -738,7 +744,7 @@ module.exports = function (webpackEnv) {
       'react': 'react',
       'react-dom': 'react-dom',
       'moment': 'moment',
-      'antd': 'antd'
+      'antd': 'antd',
     } : {},
     devServer: {
       hot: true,

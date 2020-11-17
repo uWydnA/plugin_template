@@ -1,19 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import './set_public_path'
 import App from './App';
-const Render = {
-  mount: (id) => {
-    ReactDOM.render(
-      <App />,
-      document.getElementById(id || 'root')
-    );
-  }
-}
-window.__INAPPSMASTER || Render.mount()
-export default Render.mount
-// export default App
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+
+const bootstrap = {
+	mount: (id) => {
+		ReactDOM.render(
+			<App />,
+			document.getElementById(id || 'root')
+		);
+	}
+};
+
+window.__INAPPSMASTER || (bootstrap.mount());
+export default bootstrap.mount;
