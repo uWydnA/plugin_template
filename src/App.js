@@ -1,10 +1,11 @@
-import React from 'react';
+import React from 'react'
+import styles from '@/style/App.module.less'
 
 function App() {
   return (
-    <div className="App">
-      <div>hello eden</div>
+    <div className={styles.App}>
+      <div> hello eden</div>
     </div>
-  );
+  )
 }
-export default App;
+export default App

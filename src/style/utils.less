@@ -1,0 +1,90 @@
+/*
+ * @Author: andy.wu(andy.wu@aishu.cn)
+ * @Date: 2020-11-17 10:15:18
+ * @Last Modified by: andy.wu(andy.wu@aishu.cn)
+ * @Last Modified time: 2020-11-17 10:15:18
+ */
+
+/* 封装css函数 */
+
+// 动画帧数封装
+.keyframes(@name, @args) {
+  @-webkit-keyframes @name { @args(); }
+
+  @keyframes @name { @args(); }
+}
+// 动画执行封装
+.animation(@args ) {
+  -webkit-animation: @args;
+  -o-animation: @args;
+  animation: @args;
+}
+// 盒阴影封装
+.box-shadow(@args) {
+  -webkit-box-shadow: @args;
+  box-shadow: @args;
+}
+// 盒模型封装
+.box-sizing(@args) {
+  -webkit-box-sizing: @args;
+  -moz-box-sizing: @args;
+  box-sizing: @args;
+}
+// 3D动画封装
+.transform(@args) {
+  -webkit-transform: @args;
+  -moz-transform: @args;
+  -ms-transform: @args;
+  -o-transform: @args;
+  transform: @args;
+}
+// flex布局
+.flex(@args) when (@args = 1) {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  .flex-direction(column);
+  .align-items(center);
+  .justify-content(center);
+}
+
+.flex() {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
+  .flex-direction(row);
+  .align-items(center);
+  .justify-content(space-between);
+}
+
+.flex-center() {
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.flex-1() {
+  -webkit-flex: 1;
+  flex: 1;
+}
+.align-items(@args) {
+  -webkit-align-items: @args;
+  align-items: @args;
+}
+.justify-content(@args) {
+  -webkit-justify-content: @args;
+  justify-content: @args;
+}
+.flex-wrap(@args) {
+  -webkit-flex-wrap: @args;
+  flex-wrap: @args;
+}
+.flex-direction(@args) {
+  -webkit-flex-direction: @args;
+  flex-direction: @args;
+  -ms-flex-direction: @args;
+}

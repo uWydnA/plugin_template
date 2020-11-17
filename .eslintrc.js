@@ -7,7 +7,7 @@ module.exports = {
     jquery: true
   },
   parser: 'babel-eslint',
-  extends: 'eslint:recommended',
+  extends: ['eslint:recommended', 'prettier'],
   parserOptions: {
     ecmaFeatures: {
       experimentalObjectRestSpread: true,
@@ -45,7 +45,7 @@ module.exports = {
     'no-catch-shadow': 2, //禁止catch子句参数与外部作用域变量同名
     'no-class-assign': 2, //禁止给类赋值
     'no-cond-assign': 0, //允许在条件表达式中使用赋值语句
-    'no-console': 2, //允许使用console
+    'no-console': 1, //允许使用console
     'no-const-assign': 2, //禁止修改const声明的变量
     'no-constant-condition': 1, //谨慎在条件中使用常量表达式 if(true) if(1)
     'no-continue': 0, //允许使用continue
@@ -193,7 +193,7 @@ module.exports = {
     radix: 0, //parseInt必须指定第二个参数
     'id-match': 0, //命名检测
     'require-yield': 0, //生成器函数必须有yield
-    semi: [1, 'always'], //语句强制分号结尾
+    semi: [0, 'always'], //语句强制分号结尾
     'semi-spacing': [0, { before: false, after: true }], //分号前后空格
     'sort-vars': 0, //变量声明时排序
     'space-after-keywords': [0, 'always'], //关键字后面是否要空一格
