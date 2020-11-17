@@ -150,6 +150,8 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-friendly-formatter": "^4.0.1",
     "eslint-loader": "^4.0.2",
@@ -164,6 +166,7 @@
   },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
   },
