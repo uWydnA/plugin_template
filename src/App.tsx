@@ -1,5 +1,6 @@
 import React from 'react'
-import styles from '@/style/App.module.less'
+import styles from './style/App.module.less'
+import {Container} from 'inversify'
 
 function App() {
   return (
