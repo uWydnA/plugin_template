@@ -1,15 +1,20 @@
+import {Container} from 'inversify'
+import entries from '../../ioc/entries'
+
 class MicroAppsMaster {
   public MicroApps: any
   public maps: any
   public mountedApps: any
   public path: any
   public host: any
+  public container: any
   constructor({host = 'http://localhost:7002'} = {}) {
     this.MicroApps = null
     this.maps = {}
     this.mountedApps = []
     this.path = null
     this.host = host
+    this.container = new Container()
     window.__INAPPSMASTER = true
     window.__inR = true
     /* global as */
@@ -40,6 +45,7 @@ class MicroAppsMaster {
       hashchangeCallback(null)
       window.addEventListener('hashchange', hashchangeCallback, false)
     }
+    this.BundleActivator()
   }
   findMicroApps = ({packageName, container}) => {
     return this.MicroApps.find(
@@ -81,8 +87,6 @@ class MicroAppsMaster {
   }
   uninstallMicroAppByName = (name, container) => {
     const app = this.MicroApps.find((app) => app.packageName === name)
-    console.log(this.MicroApps, name, app, 'app')
-
     app?.unmount?.(container)
   }
   manifestMapsFormat = (maps, MicroApps) => {
@@ -203,6 +207,12 @@ class MicroAppsMaster {
         console.error(error)
       }
     }
+  }
+  BundleActivator() {
+    this.container.load(entries)
+    const AppService = this.container.get('AppService')
+    const router = this.container.get('Approuter')
+    console.log(AppService, router)
   }
 }
 export default (props) => new MicroAppsMaster(props)
