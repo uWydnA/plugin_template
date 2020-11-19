@@ -1,11 +1,11 @@
 import React from 'react'
 import styles from './style/App.module.less'
-import {Container} from 'inversify'
-
+import Router from './router'
 function App() {
   return (
     <div className={styles.App}>
-      <div> hello eden</div>
+      <Router />
+      <div id="modal_plugin"></div>
     </div>
   )
 }

@@ -232,7 +232,7 @@ module.exports = function (webpackEnv) {
       globalObject: 'this',
       filename: 'app.js',
       // libraryTarget: 'umd',
-      libraryTarget: isEnvProduction ? 'system' : 'umd',
+      libraryTarget: 'system',
     },
     optimization: {
       minimize: isEnvProduction,
@@ -551,7 +551,7 @@ module.exports = function (webpackEnv) {
                   options: {
                     patterns: path.resolve(
                       __dirname,
-                      '../src/style/global.less'
+                      '../src/style/index.less'
                     ),
                   },
                 },

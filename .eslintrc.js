@@ -1,30 +1,28 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    sourceType: 'module',
+  },
   plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: ['alloy', 'alloy/react', 'alloy/typescript'],
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
+  extends: [
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'prettier/@typescript-eslint',
+  ],
+  root: true,
   env: {
-    // 您的环境变量（包含多个预定义的全局变量）
-    // Your environments (which contains several predefined global variables)
-    //
-    // browser: true,
-    // node: true,
-    // mocha: true,
-    // jest: true,
-    // jquery: true
-  },
-  globals: {
-    // 您的全局变量（设置为 false 表示它不允许被重新赋值）
-    // Your global variables (setting to false means it's not allowed to be reassigned)
-    //
-    // myGlobal: false
+    node: true,
+    jest: true,
   },
   rules: {
-    // 自定义您的规则
-    // Customize your rules
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/camelcase': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
   },
 }
