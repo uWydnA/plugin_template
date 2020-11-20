@@ -1,26 +1,41 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import App from './demo'
 import './style/global.less'
-import MicroAppsMaster from './utils/MicroAppsMaster'
-import request from './api/request'
-import microAppsConfig from './const/microAppsConfig'
-import vconsole from 'vconsole'
-new vconsole()
-
-const bootstrap = {
-  mount: (id: string) => {
-    ReactDOM.render(<App />, document.getElementById(id || 'root'))
-  },
+import {ContainerModule, injectable, inject} from 'inversify'
+import 'reflect-metadata'
+import ServiceContext from './context'
+@injectable()
+class modalService {
+  public bootstrap: any
+  public eventEmitter: any
+  public buttonService: any
+  constructor(
+    @inject('EventEmitter') EventEmitter: any,
+    @inject('ButtonService') ButtonService: any
+  ) {
+    this.eventEmitter = EventEmitter
+    this.buttonService = ButtonService
+    this.bootstrap = (id: string) => {
+      ReactDOM.render(
+        <ServiceContext.Provider
+          value={{buttonService: this.buttonService, name: '1111'}}>
+          <App />
+        </ServiceContext.Provider>,
+        document.getElementById(id || 'root')
+      )
+    }
+    this.init()
+  }
+  init() {
+    this.eventEmitter.on('onCommand:modal', (res) => {
+      console.log('modal', res?.content)
+    })
+  }
 }
 
-request('http://127.0.0.1:7002/package', {method: 'GET'}).then(
-  ({packageApps}) => {
-    MicroAppsMaster.fetchMicroAppsManifest(packageApps)
-      .registerMicroApps(microAppsConfig)
-      .then(() => {
-        bootstrap.mount('root')
-      })
-  }
-)
-export default bootstrap.mount
+const appModule = new ContainerModule((bind) => {
+  bind('modal_plugin').to(modalService)
+})
+
+export default {type: 'modal_plugin', entries: appModule}
