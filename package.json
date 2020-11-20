@@ -203,7 +203,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx}": [
+    "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "stylelint --config  ./.stylelintrc.js --fix",
       "git add"

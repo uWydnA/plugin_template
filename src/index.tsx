@@ -29,7 +29,8 @@ class modalService {
   }
   init() {
     this.eventEmitter.on('onCommand:modal', (res) => {
-      console.log('modal', res?.content)
+      // eslint-disable-next-line no-console
+      console.log('modal ', res?.content)
     })
   }
 }
