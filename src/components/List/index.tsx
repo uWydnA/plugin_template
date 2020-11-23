@@ -77,6 +77,8 @@ export default asyncComponent(async () => {
           loadMore={handleInfiniteOnLoad}
           hasMore={!loading && hasMore}
           useWindow={false}>
+          <div id="modal_plugin">modal_plugin</div>
+          <div id="app_template">app_template</div>
           <List
             itemLayout="horizontal"
             dataSource={data}

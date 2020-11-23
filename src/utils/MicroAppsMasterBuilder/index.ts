@@ -3,22 +3,30 @@ import entries from '../../ioc/entries'
 
 class MicroAppsMaster {
   public MicroApps: any
+  public pathMicroApps: any
   public maps: any
   public mountedApps: any
   public path: any
   public host: any
   public container: any
+  public serviceList: any
   constructor({host = 'http://localhost:7002'} = {}) {
-    this.MicroApps = null
+    this.MicroApps = null //配置小程序列表
+    this.pathMicroApps = [] // 当前路由可激活小程序列表
     this.maps = {}
     this.mountedApps = []
     this.path = null
     this.host = host
     this.container = new Container()
+    this.serviceList = [] //小程序提供服务列表
     window.__INAPPSMASTER = true
     window.__inR = true
     /* global as */
     window.as = {}
+    this.init()
+  }
+  init() {
+    this.loadBundle(entries)
   }
   fetchMicroAppsManifest = (api = '') => {
     if (typeof api === 'object') {
@@ -37,15 +45,17 @@ class MicroAppsMaster {
           urlGroup = window.location.href.split('#')
         }
         this.path = urlGroup?.[urlGroup.length - 1]
-        this.MicroApps.filter(
-          (app) => !app.command && (app.path === this.path || app.path === '*')
-        ).forEach(this.importModule)
+        this.pathMicroApps = this.MicroApps.filter(
+          (app) =>
+            !app?.command && (app?.path === this.path || app?.path === '*')
+        )
+        this.pathMicroApps.forEach(this.importModule)
+        console.log(this.pathMicroApps, 'this.MicroApps')
       }
       // 初始化不会触发事件，需要手动调用一次
       hashchangeCallback(null)
       window.addEventListener('hashchange', hashchangeCallback, false)
     }
-    this.BundleActivator()
   }
   findMicroApps = ({packageName, container}) => {
     return this.MicroApps.find(
@@ -81,27 +91,31 @@ class MicroAppsMaster {
     })
   }
   installMicroAppByCommand = (command) => {
-    this.MicroApps.filter((app) => app.command === command).forEach(
+    this.MicroApps.filter((app) => app?.command === command).forEach(
       this.importModule
     )
   }
   uninstallMicroAppByName = (name, container) => {
-    const app = this.MicroApps.find((app) => app.packageName === name)
+    const app = this.MicroApps.find((app) => app?.packageName === name)
     app?.unmount?.(container)
   }
   manifestMapsFormat = (maps, MicroApps) => {
     // 将importmaps的描述与注册传入的数组对包名进行合并
     this.MicroApps = MicroApps.map((app) => {
-      if (!maps.find((val) => val.packageName === app.packageName)) return false
+      if (!maps.find((val) => val.packageName === app?.packageName))
+        return false
       return {
         ...app,
         ...maps
-          .filter((mapsapp) => mapsapp.packageName === app.packageName)
-          .map((val) => ({
-            packageName: val.packageName,
-            cssEntry: val.entrypoints.filter((val) => /.css/.test(val)),
-            jsEntry: val.entrypoints.filter((val) => /.js/.test(val)),
-          }))[0],
+          .filter((mapsapp) => mapsapp?.packageName === app?.packageName)
+          .map((val) => {
+            return {
+              packageName: val.packageName,
+              cssEntry: val.entrypoints.filter((val) => /.css/.test(val)),
+              jsEntry: val.entrypoints.filter((val) => /.js/.test(val)),
+              peer: val.peer,
+            }
+          })[0],
       }
     }).filter((val) => val)
   }
@@ -179,28 +193,58 @@ class MicroAppsMaster {
     })
   }
   importModule = async (app) => {
-    if (!app.error) {
+    if (app == null) return
+    if (app?.peer) {
+      Array.isArray(app?.peer) && (await this.peerImportModule(app?.peer))
+    }
+    if (!app?.error) {
       // 当应用索引远程完成后，内存缓存并跳过索引，下次挂载可直接用内存缓存中的包
       try {
-        if (app.Module) {
-          app.ModuleApply = app.Module.apply(app.Module, [app.container])
+        if (app?.Module) {
+          app.ModuleApply = app?.Module.apply(app?.Module, [app?.container])
           return
         }
         const {cssEntry} = this.findMicroApps(app)
-        await this.importCss(app.packageName, cssEntry)
-        const {default: Module}: any = await this.importScript(app.packageName)
+        await this.importCss(app?.packageName, cssEntry)
+        const {default: Module}: any = await this.importScript(app?.packageName)
         if (typeof Module === 'function') {
           app.Module = Module
-          app.ModuleApply = Module.apply(app.Module, [app.container])
-          app.ModuleApply && (window.as[app.packageName] = app.ModuleApply)
+          app.ModuleApply = Module.apply(app?.Module, [app?.container])
+          app?.ModuleApply && (window.as[app?.packageName] = app?.ModuleApply)
         } else if (typeof Module === 'object') {
-          const {mount = () => {}, unmount = () => {}} = Module
-          app.Module = mount
-          app.unmount = unmount
-          app.ModuleApply = app.Module.apply(app.Module, [app.container])
-          app.ModuleApply && (window.as[app.packageName] = app.ModuleApply)
+          const {
+            mount = () => {},
+            unmount = () => {},
+            entries = null,
+            type = 'ButtonService',
+          } = Module
+          if (entries) {
+            const appService = this.serviceList.find((val) => val.type === type)
+            if (appService == null) {
+              this.loadBundle(entries)
+              const service = this.BundleActivator(type)
+              this.serviceList.push({type, service})
+              const {bootstrap = () => {}}: any = service
+              app.Module = bootstrap
+            } else {
+              const {bootstrap = () => {}}: any = appService?.service
+              app.Module = bootstrap
+            }
+          } else {
+            app.Module = mount
+            app.unmount = unmount
+          }
+          console.log(app?.container, 'app?.container')
+          if (
+            this.mountedApps.find(
+              (item) => item.packageName === app.packageName
+            ) == null
+          ) {
+            app.ModuleApply = app.Module.apply(app.Module, [app.container])
+            app.ModuleApply && (window.as[app?.packageName] = app?.ModuleApply)
+            app.enterFlag = true
+          }
         }
-        app.enterFlag = true
         this.mountedApps.push(app)
       } catch (error) {
         app.error = error
@@ -208,11 +252,25 @@ class MicroAppsMaster {
       }
     }
   }
-  BundleActivator() {
+  peerImportModule = (app) => {
+    const PromiseQueue: any = []
+    return new Promise((reslove, reject) => {
+      app?.forEach((name) => {
+        PromiseQueue.push(
+          this.importModule(
+            this.pathMicroApps.find((app) => app?.packageName === name)
+          )
+        )
+      })
+      Promise.all(PromiseQueue).then(() => reslove())
+    })
+  }
+  loadBundle(entries) {
     this.container.load(entries)
-    const AppService = this.container.get('AppService')
-    const router = this.container.get('Approuter')
-    console.log(AppService, router)
+  }
+  BundleActivator(bundleName) {
+    const bundle = this.container.get(bundleName)
+    return bundle
   }
 }
 export default (props) => new MicroAppsMaster(props)

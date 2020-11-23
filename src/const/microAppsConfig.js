@@ -1,9 +1,8 @@
 export default [
   {
-    packageName: 'react_plugin',
+    packageName: 'reactpdf',
     container: 'apps',
-    path: '/home',
-    command: 'react_plugin',
+    command: 'reactpdf',
   },
   {
     packageName: 'modal_plugin',
@@ -11,13 +10,8 @@ export default [
     path: '*',
   },
   {
-    packageName: 'reactpdf',
-    container: 'apps',
-    command: 'reactpdf',
-  },
-  {
-    packageName: 'reactpage',
-    container: 'apps',
-    command: 'reactpage',
+    packageName: 'searchBar',
+    container: 'searchBar',
+    path: '/apps',
   },
 ]

@@ -6,7 +6,7 @@ import MicroAppsMaster from './utils/MicroAppsMaster'
 import request from './api/request'
 import microAppsConfig from './const/microAppsConfig'
 import vconsole from 'vconsole'
-new vconsole()
+// new vconsole()
 
 const bootstrap = {
   mount: (id: string) => {

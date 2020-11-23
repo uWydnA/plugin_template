@@ -5,7 +5,6 @@ function App() {
   return (
     <div className={styles.App}>
       <Router />
-      <div id="modal_plugin"></div>
     </div>
   )
 }

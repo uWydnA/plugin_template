@@ -9,6 +9,15 @@ type Props = {
 }
 export default () => {
   const placement = 'bottom'
+  setTimeout(() => {
+    const search = MicroAppsMaster.BundleActivator('search')
+    console.log(search.eventEmitter, 'search.eventEmitter')
+
+    search.eventEmitter.on('searchValue', (res) => {
+      // eslint-disable-next-line no-console
+      console.log('searchValue', res)
+    })
+  }, 2000)
 
   const [isShowDrawer, setIsShowDrawer] = useState(false)
   const [activeAppName, setActiveAppName] = useState('')
@@ -16,7 +25,13 @@ export default () => {
     MicroAppsMaster.uninstallMicroAppByName(activeAppName, 'apps')
     setIsShowDrawer(false)
   }
-
+  const handleClick = () => {
+    const modal = MicroAppsMaster.BundleActivator('modal').instace
+    modal.showModal({
+      title: 1,
+      content: 12312312,
+    })
+  }
   return (
     <div>
       <AppsList
@@ -35,8 +50,10 @@ export default () => {
         <div id="apps">apps</div>
       </Drawer>
 
-      <div id="inputBox"></div>
-      <div id="reactpdf"></div>
+      <div id="inputBox">
+        <button onClick={handleClick}>EventEmitter</button>
+      </div>
+      <div id="searchBar">searchBar</div>
     </div>
   )
 }

@@ -7,6 +7,5 @@ export default () => (
     Home
     <List />
     {/* <ListCard /> */}
-    <div id="modal_plugin">modal_plugin</div>
   </div>
 )
